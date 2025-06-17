@@ -23,17 +23,18 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
+
 @app.route('/')
-def sobre():
-    return render_template('sobre.html')
-
-@app.route('/index.html')
 def index():
-    return render_template('index.html')
+    return render_template('index.html')  # index.html deve conter seu HTML acima
 
-@app.route('/contato.html')
+@app.route('/contato')
 def contato():
     return render_template('contato.html')
+
+@app.route('/sobre')
+def sobre():
+    return render_template('sobre.html')
 
 @app.route('/contatos', methods=['POST'])
 def contatos():
