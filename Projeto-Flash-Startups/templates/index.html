@@ -13,10 +13,9 @@
       <nav>
         <ul>
           <li><img src="/static/img/LOGO.png" height="100px" width="100px" alt="Logo Simples" class="logo-simples" /></li>
-          <li><a href="/">Início</a></li>
-          <li><a href="/contato">Contato</a></li>
-          <li><a href="/sobre">Sobre</a></li>
-
+          <li><a href="{{ url_for('index') }}" class="active">Início</a></li>
+          <li><a href="{{ url_for('contato') }}">Contato</a></li>
+          <li><a href="{{ url_for('sobre') }}">Sobre</a></li>
         </ul>
       </nav>
     </header>
@@ -40,7 +39,7 @@
 
     <section id="CADASTRO" class="form-section">
       <h2>CADASTRE SUA STARTUP</h2>
-      <form id="cadastroForm">
+      <form id="cadastroForm" enctype="multipart/form-data">
         <input type="text" id="nomeAutor" placeholder="Nome do Autor (CEO)" required />
         <input type="text" id="titulo" placeholder="Nome da Startup" required />
         <select id="categoria" required>
@@ -56,9 +55,9 @@
         <textarea id="diferencial" placeholder="Diferencial" required></textarea>
         <input type="email" id="emailUsuario" placeholder="Seu E-mail" required />
 
-        <input type="file" id="imagem" name="imagem" accept="image/*" required>
+        <label for="logo">Anexar logo da empresa (PNG, JPG, JPEG, PDF):</label>
+        <input type="file" id="logo" name="logo" accept=".png, .jpg, .jpeg, .pdf" required />
 
-    
         <button type="submit">Enviar</button>
       </form>
     </section>
@@ -72,63 +71,43 @@
   </div>
 
   <script>
-document.getElementById("cadastroForm").addEventListener("submit", async function(event) {
+    document.getElementById("cadastroForm").addEventListener("submit", async function(event) {
   event.preventDefault();
 
   const formData = new FormData();
-  formData.append('nomeAutor', document.getElementById("nomeAutor").value);
-  formData.append('titulo', document.getElementById("titulo").value);
-  formData.append('categoria', document.getElementById("categoria").value);
-  formData.append('problemaResolvido', document.getElementById("problemaResolvido").value);
-  formData.append('solucaoProposta', document.getElementById("solucaoProposta").value);
-  formData.append('diferencial', document.getElementById("diferencial").value);
-  formData.append('emailUsuario', document.getElementById("emailUsuario").value);
-
-  // Pegando a imagem
-  const imagemInput = document.getElementById("imagem");
-  if (imagemInput.files.length > 0) {
-    formData.append('imagem', imagemInput.files[0]);
-  }
+  formData.append("nomeAutor", nomeAutor.value);
+  formData.append("titulo", titulo.value);
+  formData.append("categoria", categoria.value);
+  formData.append("problemaResolvido", problemaResolvido.value);
+  formData.append("solucaoProposta", solucaoProposta.value);
+  formData.append("diferencial", diferencial.value);
+  formData.append("emailUsuario", emailUsuario.value);
+  formData.append("logo", logo.files[0]);
 
   try {
     const response = await fetch('/cadastrar_ideia', {
       method: 'POST',
       body: formData
     });
-
     const result = await response.json();
     const modal = document.getElementById("modalPopup");
-    const h3 = modal.querySelector('h3');
-    const p = modal.querySelector('p');
-
-    if (response.ok) {
-      h3.textContent = "Startup cadastrada com sucesso!";
-      p.textContent = "Seja bem-vindo à FutureNext. Entraremos em contato em breve.";
-      modal.style.display = "flex";
-      setTimeout(() => { modal.style.display = "none"; document.getElementById("cadastroForm").reset(); }, 3000);
-    } else {
-      h3.textContent = "Erro ao cadastrar startup!";
-      p.textContent = result.message || "Erro inesperado.";
-      modal.style.display = "flex";
-      setTimeout(() => { modal.style.display = "none"; }, 5000);
+    modal.querySelector("h3").textContent = result.success ? "Startup cadastrada com sucesso!" : "Erro!";
+    modal.querySelector("p").textContent = result.message;
+    modal.style.display = "flex";
+    if (result.success) {
+      setTimeout(() => { modal.style.display = "none"; cadastroForm.reset(); carregarIdeias(); }, 3000);
     }
   } catch (error) {
-    const modal = document.getElementById("modalPopup");
-    const h3 = modal.querySelector('h3');
-    const p = modal.querySelector('p');
-    h3.textContent = "Erro de Conexão!";
-    p.textContent = "Não foi possível conectar ao servidor.";
-    modal.style.display = "flex";
-    setTimeout(() => { modal.style.display = "none"; }, 5000);
+    console.error("Erro:", error);
   }
 });
-</script>
+    
+  </script>
 
   <footer class="site-footer">
     <p>&copy; 2025 FutureNext — Seja Next. Seja Future.</p>
   </footer>
-
-  <script src="static/script.js"></script>
+<script src="/static/script.js"></script>
 
 </body>
 </html>
