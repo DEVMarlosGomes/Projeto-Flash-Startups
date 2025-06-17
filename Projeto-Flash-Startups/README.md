@@ -13,11 +13,6 @@ Linguagem/Tool	Descrição
 ⚙️ JavaScript (vanilla)	Interações e comportamentos da página
 
 ## 📁 Estrutura do Projeto
-bash
-
-Copiar
-
-Editar
 
 futurenext/
 │
